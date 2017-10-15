@@ -1,0 +1,286 @@
+e.dentifier2 COG LCD
+
+Opdruk achterzijde:
+C41000169
+A14 11 0E 019264
+
+verborgen modelnummer in glas linker-bovenzijde: VM86702A
+
+
+ 1	3v	VCC		storing?, reflectie van data, dik spoor naar caps C16, c10 en C11
+				??Supply voltage for logic and LCD (+)
+ 2*	3v	Vdd?		storing?, reflectie van data, dun spoor naar C12 (kan samen met 1)
+				??Operating voltage for LCD (variable)
+ 3	3v	CLK  (WR?)	low pulsen len. 0.25us vlak voor elke byte data => (kan samen met #4)
+				?? R/W?? H=read?, L=write
+ 4	3v	CLK? (CS?)	low pulsen len. 0.125us direct aan begin van elke byte data (kan samen met #3)
+ 5	3v	Vref?		altijd hoog, stabiel 3.0V (kan samen met #1 of #2)
+				?? /RES  Reset (active low)??
+ 6	3v	D/C		low 0.25-0.31us bij command (begin vlak voor cmd), 
+				regelmatige (120us) bundels storing (62ns) in high bij data aan begin data pulse
+				H=data, L=command
+ 7	2.9V	D7		UPPER ROW LCD, MSB command byte
+ 8	2.9V	D6		low pulsen len. 0.75-1.5us vlak na clk (0=low, 1=high) 
+ 9	2.9V	D5		pull-up resistors (R34-R41, 510K) naar 3V (unpopulated C28)
+10	2.9V	D4
+11	2.9V	D3
+12	2.9V	D2
+13	2.9V	D1
+14	2.9V	D0		LOWER ROW LCD, LSB command byte
+15	0V	GND
+16	1.9V	contrast (Vee?)	C14 (100nF) naar #15 (GND). (kan met 10K naar GND)
+17*	4.9V	50Hz PWM 50% Vss? 
+18*	-3.0V	50Hz PWM 50% Vee? 	verbonden aan #17 via R42 (31 Ohm) en C36 (100nF) => optioneel. 
+					Output of inverting chargepump?: Vee = - Vdd = -3V
+* kunnen NC zijn
+
+Clock cycle length:
+- Clear block: 13.5us (74KHz)
+- CMD (3-bytes): 8.5us (118KHz)
+- Bitmap: 8.5-13us
+- Init CMD (2 bytes [0x23, 0x03]): 8.5us
+- Init block: 13.5 (74KHz)
+
+COMMANDS by bits
+	  byte 	   bits	76543210
+SETYADDR  0x4Y		01**yyyy	sets Y-address of RAM; Y=0-9  0x40-0x49	(2-6 is visible range)
+SETXADDR  0x8X		1xxxxxxx	sets X-address of RAM; x=0-102  0x80-0xE5
+DISPMODE? 0x07		00000111	M=7: normal mode - goto position specified
+					M=6: only top row, M=4: nothing shown
+					M=0-5, works okay
+
+RESET?
+0x23	ext. command?
+0x03	RESET?
+
+INIT? 
+0x23	ext. command
+0x08	8 bit data mode?
+0x92
+0x21
+0x12
+0x0C
+0xA8
+0x20
+0x05
+0x0C
+
+
+
+
+
+Data blocks:
+[48ms]
+-0- Power on CMD (2 bytes):
+0x23
+0x03
+
+[2ms]
+-1- Init CMD (10 bytes):
+0x23
+0x08
+0x92
+0x21
+0x12
+0x0C
+0xA8
+0x20
+0x05
+0x0C
+
+[9us]
+-1B- Init position (probably unneeded)
+0x40
+0x80
+0x07
+
+[13us]
+-2- Init position again for blocks (10 blocks):
+0x4z (z=blocknr 0-9)
+0x80
+0x07
+block data: 102 bytes 0x00
+[18us]
+
+[105ms]
+-3- Clear1 blocks (5 blocks):
+0x4z (z=blocknr 2-6) 
+0x80
+0x07
+block data: 102 bytes 0x00
+
+[2.4ms]
+-4A- Clear2 blocks (5 blocks):
+0x4z (z=blocknr 2-6) 
+0x80
+0x07
+block data: 102 bytes 0x00, 13.5us perbyte (1us low, 12.5us high)
+
+[55us]
+-5A- bitmap data block1
+0x43  set y position
+0xC8  set x position
+0x07
+bitmap data: frame 1, 21 bytes pixels: white=L (8.5us cycle: 1us low, 7,5us high), black=H (8.5-13us)
+0xA9  write white pixels till end? 15us byte
+
+0x44  set y position 8.5us byte
+0xC8  set x position
+0x07
+bitmap data: frame 2, 21 bytes pixels: white=L (8.5us cycle: 1us low, 7,5us high), black=H (8.5-13us)
+0xA9  write white pixels till end? 15us byte - 0xA9=0xA + 9
+
+0x45  set y position
+0xCC  set x position (four further than col 0xC8)
+0x07
+bitmap data: frame 3. 13 bytes inverse pixels: white=L (8.5us cycle: 1us low, 7,5us high), black=H (8.5-13us)
+0xAD write white pixels till end? (2.5us low, unknown high) - 0xAD=0xA + 13 (four more than 0xA9)
+
+
+[678us]
+-4B- bitmap data streepje (5 frames)
+0x42
+0x80
+0x07
+bitmap data frame 1: 17x6 bytes 0x00, 13us between chars, 10us per byte (1us low, 9us high)
+bitmap data frame 2: 17x6 bytes 0x00/0x04 "-------", same timing
+bitmap data frame 3-5: 3x17x6 bytes 0x00, slow timing: 37us bytes 1-4, 9us byte 5, 64us byte 6 + char pause
+
+[815us]
+-5B- bitmap data text (5 frames)
+0x42
+0x80
+0x07
+bitmap data frame 1: 17x6 bytes reverse "Deze pas is niet ", 25us between chars, 10us per byte (1us low, 9us high)
+bitmap data frame 2: 17x6 bytes 0x00, similar timing
+bitmap data frame 3-5: 3x17x6 bytes 0x00, slow timing: 25us bytes 1-4, 9us byte 5, 64us byte 6 + char pause
+
+
+[539us]
+-6B- bitmap data text (5 frames)
+0x42
+0x80
+0x07
+bitmap data frame 1: 17x6 bytes reverse "Deze pas is niet ", 25us between chars, 10us per byte (1us low, 9us high)
+bitmap data frame 1: 17x6 bytes reverse "geschikt.        ", 25us between chars, 10us per byte (1us low, 9us high)
+bitmap data frame 3-5: 3x17x6 bytes 0x00/stokje g, slow timing: 37us bytes 1-4, 9us byte 5, 49us byte 6 + char pause
+
+
+[817us]
+-7B- bitmap data text (5 frames)
+0x42
+0x80
+0x07
+bitmap data frame 1: 17x6 bytes reverse "Deze pas is niet", 25us between chars, 10us per byte (1us low, 9us high)
+bitmap data frame 1: 17x6 bytes reverse "geschikt.       ", 26us between chars, 10.5us per byte (1us low, 9.5us high)
+bitmap data frame 3-5: 3x17x6 bytes "This card is not"/0x00, slow timing: 27us bytes 1-4, 9us byte 5, 49us byte 6 + char pause
+
+[420us]
+-8B- bitmap data text (5 frames)
+0x42
+0x80
+0x07
+bitmap data frame 1: 17x6 bytes reverse "Deze pas is niet ", 25us between chars, 10us per byte (1us low, 9us high)
+bitmap data frame 1: 17x6 bytes reverse "geschikt.        ", 26us between chars, 10.5us per byte (1us low, 9.5us high)
+bitmap data frame 3: 3x17x6 bytes "This card is not ", slow timing: 27us bytes 1-4, 9us byte 5, 49us byte 6 + char pause
+bitmap data frame 4: 3x17x6 bytes "valid.           ", slow timing: 32us bytes 1-4, 9us byte 5, 64us byte 6 + char pause
+bitmap data frame 4: 3x17x6 bytes remainder/0x00, slow timing: 25us bytes 1-4, 9us byte 5, 49us byte 6 + char pause
+
+
+
+
+[xx]
+-9- shutdown/card eject? (1 byte) vlak voor power off, niet bij usb-power off
+0x24
+
+y    x
+9  x 6   font
+4  x 17  characters
+36 x 102 pixels
+origin right-top (D0/LSBFIRST)
+
+
+ 123456
+1 #   #
+2 #  #
+3 # #
+4 ##
+5 # #
+6 #  #
+7 #   #
+8 
+9
+
+ 123456
+1 
+2 
+3  ###
+4 #   #
+5 #####
+6 #
+7  ###
+8 
+9
+
+
+
+36*102=3672  /8=459
+
+init block: 7047 us / 13.5 us per byte = 522 bytes
+
+insert (fail):
+   12345678901234567
+1 "                 "
+2 "     -------     "
+3 "                 "
+4 "                 "
+
+   12345678901234567
+1 "Deze pas is niet "
+2 "geschikt.        "
+3 "This card is not "
+4 "valid.           "
+
+insert (valid):
+   12345678901234567
+1 "                 "
+2 "     -------     "
+3 "                 "
+4 "                 "
+
+   12345678901234567
+1 "1.Inloggen       "
+2 "2.Verzend opdr.  "
+3 "3.Controle reknr."
+4 "> Vervolgmenu: OK"
+
+usb-power
+
+   12345678901234567
+1 "                 "
+2 " +--+            "
+3 " |# |            "
+4 "  \/             "
+
+
+
++++++++++++++++++++++++
+POWER MEASUREMENTS
++++++++++++++++++++++++
+Plain LCD display connected to e.dentifier device: 0.13mA
+
+Adafruit Test example
+Po-mini 3v3 328@8Mzh, cascaded dual shift register, DC/CLK on exp.P8/P9
+ - Pro-mini plus two 74HC595 + LCD: 4.8mA
+ - Two 74HC595 + LCD: 0.946-1.02mA (via GND/VCC)
+ - LCD: 0.264-0.375mA (via VCC)
+ - LCD: 0.252-0.346mA (via ShReg-2, HIGH Qb pin)
+
+
++++++++++++++++++++++++
+TIMINGS ARDUINO LIBRARY
++++++++++++++++++++++++
+Adafruit Test example
+Po-mini 3v3 328@8Mzh, cascaded dual shift register, DC/CLK on exp.P8/P9 (150us byte-cycle)
+[1:456ms]  [2:0ms]  [3:84ms]  [5:84ms]  [7:795ms]  [8:84ms]  [9:845ms]  [11:1616ms]  [12:94ms]  [13:707ms]  [14:1044ms]  [15:340ms]  [16:379ms]  [17:215ms]  [29:115ms]  [20:166ms]  [23:92ms]  [25:112ms]  [26:0ms]  [28:88ms]  [40:84ms]  [41:2ms] 
+
