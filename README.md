@@ -13,9 +13,9 @@ The LCD display of the device is marked "C41000169 A14 11 0E 019264". Unfortunat
 By reverse engineering sufficient information to use the display in an 3.3V Arduino environment. For more information see the various sections below.
 
 See also:
-  nl.wikipedia.org/wiki/E.dentifier
-  nl.wikipedia.org/wiki/Chipknip
-  www.ru.nl/publish/pages/769526/2011_arjanblom.pdf
+ - nl.wikipedia.org/wiki/E.dentifier
+ - nl.wikipedia.org/wiki/Chipknip
+ - www.ru.nl/publish/pages/769526/2011_arjanblom.pdf
 
 This library requires the Adafruit GFX library, the mxUnifiedIO library and a suitable mxUnifiedIO expander driver. This driver was made using the Adafruit
 PCD8544 Nokia 5110 LCD library as example, but instead of directly using pins it allows the display to be driven via the expanded pins of an I2C I/O expander
@@ -36,13 +36,13 @@ LCD display pinout
 
 The e.dentifier2 LCD panel is a graphical display with a chip on glass (COG). The connector has 18 pins which are not fully understood yet. By experiments the
 following minimal connections were found working using a 3.3v Arduino 328 @ 8MHz and a 74HC595 shift register.
- 1,2,5		3V VCC	POWER+  			connect 1 to 2 and 5, then to Arduino 3.3V
- 3,4			WR_CLK	clock					connect 3 to 4 and to (expanded) pin 8
- 6				DC			data/command	connect to (expanded) pin 9
- 7-14			D7-D0		data pins			connect to expanded pins 0-7
- 15				GND			POWER- 				connect to Arduino GND 0V
- 16				LCDCAP	LCD Contrast			connect to GND via 100nF Capacitor. 10K resistor may work too.
- 17-18		NC			Not connected (-3V - 5V) output of LCD chargepump
+ - 1,2,5		3V VCC	POWER+  			connect 1 to 2 and 5, then to Arduino 3.3V
+ - 3,4			WR_CLK	clock					connect 3 to 4 and to (expanded) pin 8
+ - 6				DC			data/command	connect to (expanded) pin 9
+ - 7-14			D7-D0		data pins			connect to expanded pins 0-7
+ - 15				GND			POWER- 				connect to Arduino GND 0V
+ - 16				LCDCAP	LCD Contrast			connect to GND via 100nF Capacitor. 10K resistor may work too.
+ - 17-18		NC			Not connected (-3V - 5V) output of LCD chargepump
 (Read documentation/lcd e.dentifier2.txt for more info)
 
 
