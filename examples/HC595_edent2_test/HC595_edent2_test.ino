@@ -53,11 +53,12 @@ Pinout 74HC595 shift register DIP and SMD model:
 // when using one shiftregister, Arduino pins 8 and 9 can be used for DC and CLK
 //mxUnified74HC595 unio = mxUnified74HC595();                  // use hardware SPI pins, no cascading
 
-mxUnified74HC595 unio = mxUnified74HC595(2);               // use hardware SPI pins, two cascaded shift-registers (slightly slower, but more pins)
+
+//mxUnified74HC595 unio = mxUnified74HC595(2);               // use hardware SPI pins, two cascaded shift-registers (slightly slower, but more pins)
 //mxUnified74HC595 unio = mxUnified74HC595(10, 11, 13);      // alternative software SPI pins: SS, MOSI, SCLK, no cascading (slow, but pin-freedom)
 //mxUnified74HC595 unio = mxUnified74HC595(10, 11, 13, 2);   // alternative software SPI pins: SS, MOSI, SCLK, three cascaded shift-registers (slow, but pin-freedom)
 //mxUnified74HC595 unio = mxUnified74HC595(3, 2, 0);      // alternative software SPI pins for ESP-01: SS, MOSI, SCLK, no cascading (slow, but pin-freedom)
-//mxUnified74HC595 unio = mxUnified74HC595(3, 2, 0, 3);      // alternative software SPI pins for ESP-01: SS, MOSI, SCLK, three cascaded shift-registers (slow, but pin-freedom)
+mxUnified74HC595 unio = mxUnified74HC595(3, 2, 0, 2);      // alternative software SPI pins for ESP-01: SS, MOSI, SCLK, two cascaded shift-registers (slow, but pin-freedom)
 
 /* 
 Pinout e.dentifier2 LCD:
@@ -84,8 +85,8 @@ Pinout e.dentifier2 LCD:
 
 //const int nPinCmd=8;
 //const int nPinWrite=9;
-#define PIN_BLINK 2
-
+//#define PIN_BLINK 2
+#define PIN_BLINK 14    // pin 2 is not available on ESP-01!
 
 // The easiest way to connect the e.dentifier2 LCD to the 74HC595 shift register on a
 // breadboard is to use a shiftregister with GND next to pins P0-P6 add wires to P7, D8/D9 to DC/CLK and 3.3V to VCC.
@@ -170,13 +171,21 @@ void setup()
 
 
   uint32_t tStart=millis();
-  //unio.begin(); // regular begin() using default settings
-  unio.begin(SPI_CLOCK_DIV2);     // start using the mxUnified74HC595 shift register
+  unio.begin(); // regular begin() using default settings
+//  unio.begin(SPI_CLOCK_DIV2);     // start using the mxUnified74HC595 shift register
+// different parameter on ESP
   Serial.print(F("unio.numPins: "));
   Serial.println(unio.getNumPins());
-  SPI.setBitOrder(LSBFIRST);        // change bitOrder to match pin layout of 595 shiftregister with display (LSB next to GND is Qh of 595)
+  unio.setBitOrder(LSBFIRST);        // change bitOrder to match pin layout of 595 shiftregister with display (LSB next to GND is Qh of 595)
 
   Serial.println(F("start unio.digitalWrite"));
+  for(uint8_t i=0; i<unio.getNumPins(); i++)  
+  {
+    unio.digitalWrite(i, LOW);
+  }
+  delayBlink(100);
+  
+  
   for(uint8_t i=0; i<unio.getNumPins(); i++)  
   {
     unio.digitalWrite(i, HIGH);
