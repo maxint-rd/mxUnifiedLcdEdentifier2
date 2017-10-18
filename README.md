@@ -3,13 +3,9 @@ mxUnifiedIO device library for Arduino. Device specific driver for the LCD in th
 
 DESCRIPTION
 ===========
-This is a library for the LCD display found in the e.dentifier2 bank card reader. The e.dentifier2 is a banking security device, developed by Todos Sweden
-(now part of Gemalto) for the dutch ABN-AMRO bank. About 2.5 million of these devices have been distributed amongst customers. Since 2015 the device is partially
-replaced by the mobile app. Next to generating response codes for login and for transactions, the device can also be used to view the balance and history of the
-chipknip wallet, a payment system that was decomissioned on december 31, 2014. The USB interface of the device is intended to simplify using the device,
-but its implementation introduced a security vulnarability when connected. Nevertheless, the device it is still in use.
+This is a library for the LCD display found in the e.dentifier2 bank card reader. The e.dentifier2 is a banking security device, developed by Todos Sweden (now part of Gemalto) for the dutch ABN-AMRO bank. About 2.5 million of these devices have been distributed amongst customers. Since 2015 the device is partially replaced by the mobile app. Next to generating response codes for login and for transactions, the device can also be used to view the balance and history of the chipknip wallet, a payment system that was decomissioned on december 31, 2014. The USB interface of the device is intended to simplify using the device, but its implementation introduced a security vulnarability when connected. Nevertheless, the device it is still in use.
 
-The LCD display of the device is marked "C41000169 A14 11 0E 019264". Unfortunately no public documentation of the LCD display in the device was found. 
+The LCD panel of the device is marked "C41000169 A14 11 0E 019264". Unfortunately no public documentation of the LCD panel in the device was found. 
 By reverse engineering sufficient information was gained to use the display in an 3.3V Arduino environment. For more information see the various sections below.
 
 See also:
@@ -19,8 +15,13 @@ See also:
 
 This library requires the Adafruit GFX library, the mxUnifiedIO library and a suitable mxUnifiedIO expander driver. This driver was made using the Adafruit PCD8544 Nokia 5110 LCD library as example, but instead of directly using pins it allows the display to be driven via the expanded pins of an I2C I/O expander or a shift-register.
 
-LCD display pinout
-==================
+YouTube videos
+==============
+ - Looking inside the e.dentifier2 device: https://youtu.be/leq9zHxpAJc
+ - Analysing and using the LCD: https://youtu.be/NXtHkjaIge0
+
+LCD panel pinout
+================
            135791357
      /-----"""""""""-----\
      +-------------------+ 
@@ -32,8 +33,7 @@ LCD display pinout
      | '~`^"             |
      +-------------------+
 
-The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on glass (COG). The connector has 18 pins which are not fully understood yet. By experiments the
-following minimal connections were found working using a 3.3v Arduino 328 @ 8MHz and a 74HC595 shift register.
+The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on glass (COG). The connector has 18 pins which are not fully understood yet. By experiments the following minimal connections were found working using a 3.3v Arduino 328 @ 8MHz and a 74HC595 shift register.
  - 1,2,5		3V VCC	POWER+  			connect 1 to 2 and 5, then to Arduino 3.3V
  - 3,4			WR_CLK	clock					connect 3 to 4 and to (expanded) pin 8
  - 6				DC			data/command	connect to (expanded) pin 9
