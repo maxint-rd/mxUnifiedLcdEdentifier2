@@ -5,8 +5,8 @@ DESCRIPTION
 ===========
 This is a library for the LCD display found in the e.dentifier2 bank card reader. The e.dentifier2 is a banking security device, developed by Todos Sweden (now part of Gemalto) for the dutch ABN-AMRO bank. About 2.5 million of these devices have been distributed amongst customers. Since 2015 the device is partially replaced by the mobile app. Next to generating response codes for login and for transactions, the device can also be used to view the balance and history of the chipknip wallet, a payment system that was decomissioned on december 31, 2014. The USB interface of the device is intended to simplify using the device, but its implementation introduced a security vulnarability when connected. Nevertheless, the device it is still in use.
 
-The LCD panel of the device is marked "C41000169 A14 11 0E 019264". Unfortunately no public documentation of the LCD panel in the device was found. 
-By reverse engineering sufficient information was gained to use the display in an 3.3V Arduino environment. For more information see the various sections below.
+The LCD panel of the device is marked "C41000169 A14 11 0E 019264". Unfortunately no public documentation of the LCD panel in the device was found. By reverse engineering sufficient information was gained to use the display in an 3.3V Arduino environment. The control commandset resembles that of Philips LCD control chips, such as the popular PCD8544, but the LCD differs in functionality.
+For more information see the various sections below.
 
 See also:
  - nl.wikipedia.org/wiki/E.dentifier
@@ -52,7 +52,7 @@ D10, D11 and D13. On the ESP8266 the default SPI pins are GPIO15, GPIO13 and GPI
 This driver supports using one shift-register for the datapins in combination with two regular pins for WR and DC. Alternatively two cascaded registers can be using in which case the datapins
 are all supplied by the ending (first) register and the WR and DC by the second. For the shift-register the mxUnified74HC595 driver is used over SPI.
 
-See the included example for suggested connections of the display module to the I2C LCD driver interface.
+See the included example for suggested connections of the display module to the shift register(s).
 
 Using I2C I/O expander
 ======================
@@ -60,9 +60,8 @@ The (shared) I2C bus only requires two data-lines (SDA and SCL). On the Arduino 
 
 To drive this LCD module, the I/O expander needs to have at least 8 output pins available, all at the same H/L level. For that reason the cheap I2C backpack board can not be used for this display.
 
-See the included example for suggested connections of the display module to the I2C LCD driver interface.
-
-
+See the examples in mxUnifiedPCD8544_Nokia_5110_LCD for suggested connections of the display module to an I2C LCD driver interface.
+This LCD driver library has not been tested with an I2C I/O expander yet, but should function just as well as when using a shift register.
 
 CREDITS
 ========
@@ -96,6 +95,10 @@ TROUBLESHOOTING TIPS
 - Check if all data-pins between display and interface modules are properly connected, according the pins as defined in your sketch.
 - Use a multimeter to check pin voltages. Note: the e.dentifier2 is a 3V LCD display. It has been tested to work on 3.3V. It may fail when using higher voltages.
 
+Features & limitations
+======================
+- The current version of this library supports ESP8266 and Atmel ATmega328 MCUs. On experiments using an ESP-01 noise was observed, possibly due to power issues. Noise may cause wild pixels on the display or errors initialing properly, resulting in nothing displayed.
+- Currently not all LCD commands are fully known. The command-set resembles that of the Nokia 5110 (PCD8544) and other Philips LCD controllers. Based on the datasheets of these controllers more commands were discovered (such as inverting and setting contrast).
 
 LINKS
 =====
@@ -126,3 +129,7 @@ LICENSE
 =======
 This library inherits the BSD license from the original library which limits the usage of this library to specific terms.
 Read license.txt for more information.
+
+Disclaimer
+==========
+All code on this GitHub account, including this library is provided to you on an as-is basis without guarantees and with all liability dismissed. It may be used at your own risk. Unfortunately I have no means to provide support.
