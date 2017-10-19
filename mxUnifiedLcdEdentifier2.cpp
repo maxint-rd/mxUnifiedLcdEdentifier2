@@ -321,23 +321,24 @@ void mxUnifiedLcdEdentifier2::lcdInit()
 //  delay(100);
 
   // send init/reset commands
-  lcdCmd(0x23);
-  lcdCmd(0x03);
+  lcdCmd(0x23);			// functionset extended, vertical addressing mode?
+  lcdCmd(0x03);			// unknown extended command: RESET???
 
   // wait
   delay(2);
 
   // send init block commands
-  lcdCmd(0x23);
-  lcdCmd(0x08);
-  lcdCmd(0x92);
-  lcdCmd(0x21);
-  lcdCmd(0x12);
-  lcdCmd(0x0C);
-  lcdCmd(0xA8);
-  lcdCmd(0x20);
-  lcdCmd(0x05);
-  lcdCmd(0x0C);
+  lcdCmd(0x23);			// functionset extended vertical addressing mode?
+  lcdCmd(0x08);			// unknown extended command??? (0x09/0A no difference, 0x0F gives low contrast, 0x01/03 fails even after reflash) set display config 000???
+  lcdCmd(0x92);			// unknown extended command??? (0xF2/A2/A4/B0 no difference, 0x90/94 give very low contrast) set contrast low???
+  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_EXTENDEDINSTRUCTION);			// functionset extended horizontal addressing mode (0x21)
+  lcdCmd(LCDEDENT2_SETBIAS | 0x2);			// set bias system to 2 (BS1=on - 1:65)???
+  lcdCmd(LCDEDENT2_EXT_DISPCONF | LCDEDENT2_EXT_DISPCONF_DO);			// display config top/bottom row mode set data, DO=1: LSB is on top (0x0C)
+  									// TODO: reconfigure driver to use DO=0 (MSB is on top)
+  lcdCmd(LCDEDENT2_SETVOP | 0x28);			// set contrast (Vop to 0x28=40)
+  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_BASICINSTRUCTION);			// functionset basic horizontal addressing mode (0x20)
+  lcdCmd(0x05);			// VLCD programming range select??? 0x05=Vlcd programming range HIGH (0x04 fails)
+  lcdCmd(LCDEDENT2_DISPLAYCONTROL|LCDEDENT2_DISPLAYNORMAL);		// display control normal (0x0C)
 
   // send init block data
   delayMicroseconds(15);
@@ -420,14 +421,26 @@ void mxUnifiedLcdEdentifier2::begin(uint8_t contrast, uint8_t bias)
 
 
 void mxUnifiedLcdEdentifier2::setContrast(uint8_t val)
-{	// TODO
-
+{	//  set the contrast level of the display. Default after init: 40 (0x28)
+  if (val > 0x7f) val = 0x7f;
+  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_EXTENDEDINSTRUCTION );		// switch to extended mode
+  lcdCmd(LCDEDENT2_SETVOP | val);
+  lcdCmd(LCDEDENT2_FUNCTIONSET);					// switch back to basic mode
 }
 
-
-void mxUnifiedLcdEdentifier2::invertDisplay(boolean i)
-{	// TODO
+void mxUnifiedLcdEdentifier2::invertDisplay(boolean f)
+{	// invert the display and show subsequent pixels inverted
+	lcdCmd(LCDEDENT2_DISPLAYCONTROL | (f ? LCDEDENT2_DISPLAYINVERTED : LCDEDENT2_DISPLAYNORMAL));
 }
+
+void mxUnifiedLcdEdentifier2::mirrorDisplay(boolean fMirrorX, boolean fMirrorY)
+{	//  set the display in mirrored mode (Y direction)
+	uint8_t nVal=LCDEDENT2_FUNCTIONSET;
+	if(fMirrorX) nVal|=LCDEDENT2_MIRRORX;		// not supported by e.dentifier2 LCD
+	if(fMirrorY) nVal|=LCDEDENT2_MIRRORY;
+  lcdCmd(nVal);		// switch to mirrored mode
+}
+
 
 // clear everything
 void mxUnifiedLcdEdentifier2::clearDisplay(void)

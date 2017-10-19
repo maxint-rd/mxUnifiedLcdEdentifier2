@@ -66,7 +66,39 @@ https://github.com/maxint-rd/mxUnifiedPIO
 #define LCDEDENT2_INIT2_G 0xa8
 #define LCDEDENT2_INIT2_H 0x20
 #define LCDEDENT2_INIT2_I 0x05
-#define LCDEDENT2_INIT2_J 0x0C
+
+
+// These can be used to with LCDEDENT2_FUNCTIONSET to mirror the display in Y direction
+// these comands are same as PCF8548
+#define LCDEDENT2_MIRRORY 0x08
+#define LCDEDENT2_MIRRORX 0x10		// unfortunately X is not supported on e.dentifier2 display!
+#define LCDEDENT2_EXT_DISPCONF 0x08
+#define LCDEDENT2_EXT_DISPCONF_DO 0x4			// D0=1: LSB is on top, D0=0: MSB is on top
+#define LCDEDENT2_EXT_DISPCONF_TRS 0x2		// seem not supported on e.dentifier2 display!
+#define LCDEDENT2_EXT_DISPCONF_BRS 0x1		// seem not supported on e.dentifier2 display!
+
+
+// these comands are same as Nokia 5110, PCD8544
+#define LCDEDENT2_BASICINSTRUCTION 0x0
+#define LCDEDENT2_EXTENDEDINSTRUCTION 0x1
+
+#define LCDEDENT2_DISPLAYBLANK 0x0
+#define LCDEDENT2_DISPLAYNORMAL 0x4
+#define LCDEDENT2_DISPLAYALLON 0x1
+#define LCDEDENT2_DISPLAYINVERTED 0x5
+
+// H = 0
+#define LCDEDENT2_FUNCTIONSET 0x20
+#define LCDEDENT2_DISPLAYCONTROL 0x08
+#define LCDEDENT2_SETYADDR 0x40
+#define LCDEDENT2_SETXADDR 0x80
+
+// H = 1
+#define LCDEDENT2_SETTEMP 0x04
+#define LCDEDENT2_SETBIAS 0x10
+#define LCDEDENT2_SETVOP 0x80
+
+
 
 // Clear-all is send 2ms after INIT2 and consists of 10 numbered blocks
 // Each block is preceeded by a numbered BLOCK1 command
@@ -135,7 +167,8 @@ class mxUnifiedLcdEdentifier2 : public Adafruit_GFX
 
   void begin(uint8_t contrast = 40, uint8_t bias = 0x04);
   void setContrast(uint8_t val);
-	void invertDisplay(boolean i);
+	void invertDisplay(boolean f);
+	void mirrorDisplay(boolean fMirrorX, boolean fMirrorY);
   void display();
 	void clearDisplay(void);
   
