@@ -27,16 +27,16 @@ https://github.com/maxint-rd/I2C-PCF8574-PCD8544-Nokia-5110-LCD
 #include <Fonts/FreeSerif9pt7b.h>
 
 
-// mxUnified74HC595 unio = mxUnified74HC595();                  // use hardware SPI pins, no cascading (requires additional pins for DC and CLK
+mxUnified74HC595 unio = mxUnified74HC595();                  // use hardware SPI pins, no cascading (requires additional pins for DC and CLK
 //mxUnified74HC595 unio = mxUnified74HC595(2);               // use hardware SPI pins, two cascaded shift-registers (slightly slower, but more pins)
 
 //mxUnified74HC595 unio = mxUnified74HC595(3, 2, 0);      // alternative software SPI pins for ESP-01: SS, MOSI, SCLK, no cascading (slow, but pin-freedom)
-mxUnified74HC595 unio = mxUnified74HC595(3, 2, 0, 2);      // alternative software SPI pins for ESP-01: SS, MOSI, SCLK,  two cascaded shift-registers (slow, but pin-freedom)
+//mxUnified74HC595 unio = mxUnified74HC595(3, 2, 0, 2);      // alternative software SPI pins for ESP-01: SS, MOSI, SCLK,  two cascaded shift-registers (slow, but pin-freedom)
 
 // The easiest way to connect the e.dentifier2 LCD to the 74HC595 shift register on a
 // breadboard is to use a shiftregister with GND next to pins P0-P6 add wires to P7, D8/D9 to DC/CLK and 3.3V to VCC.
-mxUnifiedLcdEdentifier2 display = mxUnifiedLcdEdentifier2(&unio);         // e.dentifier2 LCD: datapins P0-P7, DC=P8, CLK=P9 (all expander pins)
-//mxUnifiedLcdEdentifier2 display = mxUnifiedLcdEdentifier2(&unio, 8, 9);         // e.dentifier2 LCD: datapins P0-P7, DC=D8, CLK=D9 (DC and CLK are MCU pins)
+//mxUnifiedLcdEdentifier2 display = mxUnifiedLcdEdentifier2(&unio);         // e.dentifier2 LCD: datapins P0-P7, DC=P8, CLK=P9 (all expander pins)
+mxUnifiedLcdEdentifier2 display = mxUnifiedLcdEdentifier2(&unio, 8, 9);         // e.dentifier2 LCD: datapins P0-P7, DC=D8, CLK=D9 (DC and CLK are MCU pins)
 
 #define LED_BLINK 2       // LED_BUILTIN=GPIO1 (TX) on ESP-01, GPIO2 on ESP-12E, 13 on Uno (should be redefined to 2 to avoid conflict)
 
@@ -103,6 +103,37 @@ void setup()
   display.print("YouTube");
   display.display();
   delayBlink(2000);
+
+  // invert display
+  for(int i=0; i<5; i++)
+  {
+    display.invertDisplay(true);
+    delayBlink(200);
+    display.invertDisplay(false);
+    delayBlink(200);
+  }
+
+  // mirror display
+  // unfortunately mirror X is not supported on e.dentifier2 display!
+  for(int i=0; i<5; i++)
+  {
+    display.mirrorDisplay(false, true);
+    delayBlink(400);
+    display.mirrorDisplay(false, false);
+    delayBlink(200);
+  }
+
+
+
+  // change contrast
+  for(uint8_t i=10; i<120; i++)
+  {
+    display.setContrast(i);
+    delayBlink(50);
+  }
+  display.setContrast(40);
+  delayBlink(1000);
+
 
   // show characters  using regular font
   display.clearDisplay();
