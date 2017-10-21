@@ -9,11 +9,11 @@ The LCD panel of the device is marked "C41000169 A14 11 0E 019264". Unfortunatel
 For more information see the various sections below.
 
 See also:
- - nl.wikipedia.org/wiki/E.dentifier
- - nl.wikipedia.org/wiki/Chipknip
- - www.ru.nl/publish/pages/769526/2011_arjanblom.pdf
+ - http://nl.wikipedia.org/wiki/E.dentifier
+ - http://nl.wikipedia.org/wiki/Chipknip
+ - http://www.ru.nl/publish/pages/769526/2011_arjanblom.pdf
 
-This library requires the Adafruit GFX library, the mxUnifiedIO library and a suitable mxUnifiedIO expander driver. This driver was made using the Adafruit PCD8544 Nokia 5110 LCD library as example, but instead of directly using pins it allows the display to be driven via the expanded pins of an I2C I/O expander or a shift-register.
+This library requires the Adafruit GFX library, the [mxUnifiedIO](https://github.com/maxint-rd/mxUnifiedIO) library and a suitable mxUnifiedIO expander driver. This driver was made using the Adafruit PCD8544 Nokia 5110 LCD library as example, but instead of directly using pins it allows the display to be driven via the expanded pins of an I2C I/O expander or a shift-register.
 
 YouTube videos
 ==============
@@ -101,7 +101,7 @@ TROUBLESHOOTING TIPS
 
 Features & limitations
 ======================
-- The current version of this library supports ESP8266 and Atmel ATmega328 MCUs. On experiments using an ESP-01 noise was observed, possibly due to power issues. Noise may cause wild pixels on the display or errors initialing properly, resulting in nothing displayed.
+- The current version of this library supports ESP8266 and Atmel ATmega328 MCUs. On experiments using an ESP-01 noise was observed, possibly due to power issues. Noise may cause wild pixels on the display or errors initializing properly, resulting in nothing displayed.
 - Currently not all LCD commands are fully known. The command-set resembles that of the Nokia 5110 (PCD8544) and other Philips LCD controllers. Based on the datasheets of these controllers more commands were discovered (such as inverting and setting contrast).
 
 LINKS
