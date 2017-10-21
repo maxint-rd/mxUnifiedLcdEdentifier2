@@ -35,15 +35,15 @@ LCD panel pinout
 
 The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on glass (COG). The connector has 18 pins which are not fully understood yet. By experiments the following minimal connections were found working using a 3.3v Arduino 328 @ 8MHz and a 74HC595 shift register.
 
-| pin(s)   |name            |description |
-|---------|-----------------|------------|
-|  1,2,5 	|	3V VCC	POWER+   |	connect 1 to 2 and 5, then to Arduino 3.3V |
-|  3,4	   |	WR_CLK	clock			 |	connect 3 to 4 and to (expanded) pin 8 |
-|  6   	 	|	DC	             |	data/command	connect to (expanded) pin 9 |
-|  7-14  	|	D7-D0           |	data pins			connect to expanded pins 0-7 |
-|  15    	|	GND			POWER- 			|	connect to Arduino GND 0V |
-|  16    	|	LCDCAP	         | LCD Contrast			connect to GND via 100nF Capacitor. 10K resistor may work too. |
-|  17-18  |	NC	             |		Not connected (-3V - 5V) output of LCD chargepump |
+| pin(s)   |name    |description |
+|---------|---------|------------|
+|  1,2,5 	|	3V VCC  |	POWER+. Connect 1 to 2 and 5, then to Arduino 3.3V |
+|  3,4	   |	WR_CLK	 |	Write clock.	Connect 3 to 4 and to (expanded) pin 8 |
+|  6   	 	|	DC	     |	Data/command. Connect to (expanded) pin 9 |
+|  7-14  	|	D7-D0   |	Data pins.	Connect to expanded pins 0-7 |
+|  15    	|	GND		 		|	POWER-. Connect to Arduino GND 0V |
+|  16    	|	LCDCAP  | LCD Contrast.	Connect to GND via 100nF Capacitor. 10K resistor may work too. |
+|  17-18  |	NC	     |	Not connected (-3V - 5V) output of LCD chargepump |
 
 (Read documentation/lcd e.dentifier2.txt for more info)
 
