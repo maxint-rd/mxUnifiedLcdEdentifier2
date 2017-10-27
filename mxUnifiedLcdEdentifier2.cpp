@@ -291,7 +291,7 @@ void mxUnifiedLcdEdentifier2::lcdRowCol(uint8_t nRow, uint8_t nCol)		//nRow=0, n
 {
   lcdWrite(true, LCDEDENT2_SETYADDR | nRow);
   lcdWrite(true, LCDEDENT2_SETXADDR | nCol);
-  lcdWrite(true, LCDEDENT2_DISPMODE);			// driver also seems to work when this command isn't sent
+  lcdWrite(true, LCDEDENT2_READMODIFYWRITE);			// driver also seems to work when this command isn't sent
 }
 
 
@@ -321,24 +321,24 @@ void mxUnifiedLcdEdentifier2::lcdInit()
 //  delay(100);
 
   // send init/reset commands
-  lcdCmd(0x23);			// functionset extended, vertical addressing mode?
-  lcdCmd(0x03);			// unknown extended command: RESET???
+  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_EXTENDEDINSTRUCTION3);			// 0x23: functionset extended-three H1=1, H0=1
+  lcdCmd(LCDEDENT2_EXT3_RESET);			// 0x03: extended-two command: RESET
 
   // wait
   delay(2);
 
   // send init block commands
-  lcdCmd(0x23);			// functionset extended vertical addressing mode?
-  lcdCmd(0x08);			// unknown extended command??? (0x09/0A no difference, 0x0F gives low contrast, 0x01/03 fails even after reflash) set display config 000???
-  lcdCmd(0x92);			// unknown extended command??? (0xF2/A2/A4/B0 no difference, 0x90/94 give very low contrast) set contrast low???
-  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_EXTENDEDINSTRUCTION);			// functionset extended horizontal addressing mode (0x21)
-  lcdCmd(LCDEDENT2_SETBIAS | 0x2);			// set bias system to 2 (BS1=on - 1:65)???
-  lcdCmd(LCDEDENT2_EXT_DISPCONF | LCDEDENT2_EXT_DISPCONF_DO);			// display config top/bottom row mode set data, DO=1: LSB is on top (0x0C)
-  									// TODO: reconfigure driver to use DO=0 (MSB is on top)
+  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_EXTENDEDINSTRUCTION3);			// 0x23: functionset extended-three H1=1, H0=1
+  lcdCmd(LCDEDENT2_EXT3_FRAMERATE | 0x0);			// 0x08: Framerate 0  (55Hz) (0x09/0A no difference, 0x0F gives low contrast, 0x01/03 fails even after reflash)
+  lcdCmd(LCDEDENT2_EXT3_BOOSTEREFF | LCDEDENT2_EXT3_BOOSTEREFF_PC1);	// 0x92 booster efficiency PC1=1 (0x90/94 give very low contrast)
+  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_EXTENDEDINSTRUCTION);			// functionset extended-one addressing mode (0x21)
+  lcdCmd(LCDEDENT2_SETBIAS | 0x2);			// set bias system to 2 (BS1=on - 1:65)
+  lcdCmd(LCDEDENT2_EXT_DISPCONF | LCDEDENT2_EXT_DISPCONF_DO);					// display config top/bottom row mode set data, DO=1: LSB is on top (0x0C)
+																				// TODO: reconfigure driver to use DO=0 (MSB is on top)
   lcdCmd(LCDEDENT2_SETVOP | 0x28);			// set contrast (Vop to 0x28=40)
-  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_BASICINSTRUCTION);			// functionset basic horizontal addressing mode (0x20)
-  lcdCmd(0x05);			// VLCD programming range select??? 0x05=Vlcd programming range HIGH (0x04 fails)
-  lcdCmd(LCDEDENT2_DISPLAYCONTROL|LCDEDENT2_DISPLAYNORMAL);		// display control normal (0x0C)
+  lcdCmd(LCDEDENT2_FUNCTIONSET | LCDEDENT2_BASICINSTRUCTION);					// functionset basic horizontal addressing mode (0x20)
+  lcdCmd(LCDEDENT2_SETPRS | 0x1);			// 0x05 Vlcd programming range HIGH (0x04 fails)
+  lcdCmd(LCDEDENT2_DISPLAYCONTROL|LCDEDENT2_DISPLAYNORMAL);						// display control normal (0x0C)
 
   // send init block data
   delayMicroseconds(15);

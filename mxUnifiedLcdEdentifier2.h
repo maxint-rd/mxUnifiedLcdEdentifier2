@@ -53,20 +53,20 @@ https://github.com/maxint-rd/mxUnifiedPIO
 // Every command and data byte and gets two LOW clock pulses. WR-pin: 0.25us started just before, CS-pin: 0.125us right at start of each byte
 // Timing of clock pulse is 8.5us to 13us.
 // Command bytes have DC-pin set LOW: 0.25us started just before each command byte.
-#define LCDEDENT2_INIT1_A 0x23
-#define LCDEDENT2_INIT1_B 0x03
+#define LCDEDENT2_INIT1_A 0x23	// Functionset extended: H0=1, H1=1
+#define LCDEDENT2_INIT1_B 0x03	// Software reset
 
 // Commands sent 2ms after INIT1  [10 bytes]
-#define LCDEDENT2_INIT2_A 0x23
-#define LCDEDENT2_INIT2_B 0x08
-#define LCDEDENT2_INIT2_C 0x92
-#define LCDEDENT2_INIT2_D 0x21
-#define LCDEDENT2_INIT2_E 0x12
-#define LCDEDENT2_INIT2_F 0x0C
-#define LCDEDENT2_INIT2_G 0xa8
-#define LCDEDENT2_INIT2_H 0x20
-#define LCDEDENT2_INIT2_I 0x05
-
+#define LCDEDENT2_INIT2_A 0x23	// Functionset extended: H0=1, H1=1
+#define LCDEDENT2_INIT2_B 0x08	// Frame rate control set to 0x0
+#define LCDEDENT2_INIT2_C 0x92	// Booster Efficienty set to BE1=0, BE0=0, PC1=1, PC0=0
+#define LCDEDENT2_INIT2_D 0x21	// Functionset extended: H0=1, H1=0
+#define LCDEDENT2_INIT2_E 0x12	// set bias system to 2 (BS1=on - 1:65)
+#define LCDEDENT2_INIT2_F 0x0C	// Display configuration D0=1 (D0=1: LSB is on top, D0=0: MSB is on top)
+#define LCDEDENT2_INIT2_G 0xA8	// Set contrast (Vop to 0x28=40)
+#define LCDEDENT2_INIT2_H 0x20	// Functionset basic: H0=1, H1=1
+#define LCDEDENT2_INIT2_I 0x05	// Vop range set PRS=1 (1=Programming range HIGH)
+#define LCDEDENT2_INIT2_J 0x0C	// display control normal (not inverse)
 
 // These can be used to with LCDEDENT2_FUNCTIONSET to mirror the display in Y direction
 // these comands are same as PCF8548
@@ -81,24 +81,34 @@ https://github.com/maxint-rd/mxUnifiedPIO
 // these comands are same as Nokia 5110, PCD8544
 #define LCDEDENT2_BASICINSTRUCTION 0x0
 #define LCDEDENT2_EXTENDEDINSTRUCTION 0x1
+#define LCDEDENT2_EXTENDEDINSTRUCTION2 0x2
+#define LCDEDENT2_EXTENDEDINSTRUCTION3 0x3
 
 #define LCDEDENT2_DISPLAYBLANK 0x0
 #define LCDEDENT2_DISPLAYNORMAL 0x4
 #define LCDEDENT2_DISPLAYALLON 0x1
 #define LCDEDENT2_DISPLAYINVERTED 0x5
 
-// H = 0
+// H1,H0=0
 #define LCDEDENT2_FUNCTIONSET 0x20
 #define LCDEDENT2_DISPLAYCONTROL 0x08
+#define LCDEDENT2_SETPRS 0x04
 #define LCDEDENT2_SETYADDR 0x40
 #define LCDEDENT2_SETXADDR 0x80
 
-// H = 1
+// H1=0, H0=1
 #define LCDEDENT2_SETTEMP 0x04
 #define LCDEDENT2_SETBIAS 0x10
 #define LCDEDENT2_SETVOP 0x80
 
-
+// H1=1, H0=1 (Same as Sitronix ST7549T)
+#define LCDEDENT2_EXT3_RESET 0x03
+#define LCDEDENT2_EXT3_FRAMERATE 0x08
+#define LCDEDENT2_EXT3_BOOSTEREFF 0x90
+#define LCDEDENT2_EXT3_BOOSTEREFF_BE1 0x8
+#define LCDEDENT2_EXT3_BOOSTEREFF_BE0 0x4
+#define LCDEDENT2_EXT3_BOOSTEREFF_PC1 0x2
+#define LCDEDENT2_EXT3_BOOSTEREFF_PC0 0x1
 
 // Clear-all is send 2ms after INIT2 and consists of 10 numbered blocks
 // Each block is preceeded by a numbered BLOCK1 command
@@ -140,9 +150,7 @@ https://github.com/maxint-rd/mxUnifiedPIO
 #define LCDEDENT2_BLOCK4_GO  0x07
 #define LCDEDENT2_BLOCK3_END 0xAD
 
-#define LCDEDENT2_SETYADDR 0x40
-#define LCDEDENT2_SETXADDR 0x80
-#define LCDEDENT2_DISPMODE 0x07		// 0x07
+#define LCDEDENT2_READMODIFYWRITE 0x07		// 0x07 = R:+0, W:+1 
 
 
 // Fastest SPI speed is 4MHZ (DIV2 on 328@8Mhz, DIV4 on 328@16Mhz)
