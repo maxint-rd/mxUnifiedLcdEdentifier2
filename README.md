@@ -5,8 +5,7 @@ DESCRIPTION
 ===========
 This is a library for the LCD display found in the e.dentifier2 bank card reader. The e.dentifier2 is a banking security device, developed by Todos Sweden (now part of Gemalto) for the dutch ABN-AMRO bank. About 2.5 million of these devices have been distributed amongst customers. Since 2015 the device is partially replaced by the mobile app. Next to generating response codes for login and for transactions, the device can also be used to view the balance and history of the chipknip wallet, a payment system that was decomissioned on december 31, 2014. The USB interface of the device is intended to simplify using the device, but its implementation introduced a security vulnarability when connected. Nevertheless, the device it is still in use.
 
-The LCD panel of the device is marked "C41000169 A14 11 0E 019264". Unfortunately no public documentation of the LCD panel in the device was found. By reverse engineering sufficient information was gained to use the display in an 3.3V Arduino environment. The control commandset resembles that of Philips LCD control chips, such as the popular PCD8544, but the LCD differs in functionality.
-For more information see the various sections below.
+The LCD panel of the device is marked "C41000169 A14 11 0E 019264". Unfortunately no public documentation of the LCD panel in the device was found. By reverse engineering sufficient information was gained to use the display in an 3.3V Arduino environment. The control commandset resembles that of Philips LCD control chips (such as the popular PCD8544) and other similar chips (such as the Sitronix ST7549T), but the LCD differs in functionality. For more information see the various sections below.
 
 See also:
  - http://nl.wikipedia.org/wiki/E.dentifier
@@ -101,8 +100,8 @@ TROUBLESHOOTING TIPS
 
 Features & limitations
 ======================
-- The current version of this library supports ESP8266 and Atmel ATmega328 MCUs. On experiments using an ESP-01 noise was observed, possibly due to power issues. Noise may cause wild pixels on the display or errors initializing properly, resulting in nothing displayed.
-- Currently not all LCD commands are fully known. The command-set resembles that of the Nokia 5110 (PCD8544) and other Philips LCD controllers. Based on the datasheets of these controllers more commands were discovered (such as inverting and setting contrast).
+- The current version of this library supports ESP8266 and Atmel ATmega328 MCUs. On some experiments using an ESP-01 occasional noise was observed, possibly due to power issues. Noise may cause wild pixels on the display or errors initializing properly, resulting in nothing displayed or in distorted images, depending on which bits flipped when.
+- Currently the LCD commands are not decisively fully known. The command-set resembles that of the Nokia 5110 (PCD8544) and other Philips LCD controllers. More features were discovered in the Sitronix ST7549T datasheet. There are multiple controller manufacturers using similar protocols, which can be recognized for instance by there addressing scheme (0x4xxx and 0x8xxx for rows and columns). Based on the datasheets of the Philips and Sitronix controllers more commands were discovered (such as inverting and setting contrast). All commands used by the e.dentifier2 device have been identified but more commands could be applicable to this LCD. 
 
 LINKS
 =====
