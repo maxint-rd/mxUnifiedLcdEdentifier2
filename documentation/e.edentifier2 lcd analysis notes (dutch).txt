@@ -48,26 +48,69 @@ SETXADDR  0x8X		1xxxxxxx	sets X-address of RAM; x=0-102  0x80-0xE5
 DISPMODE? 0x07		00000111	M=7: normal mode - goto position specified
 					M=6: only top row, M=4: nothing shown
 					M=0-5, works okay
-
-RESET?
-0x23	ext. command?
-0x03	RESET?
-
-INIT? 
-0x23	ext. command
-0x08	8 bit data mode?
-0x92
-0x21
-0x12
-0x0C
-0xA8
-0x20
-0x05
-0x0C
+MODEALLWHITE 0x08	00001000	all pixels white
+MODEALLBLACK 0x09	00001001	all pixels black
+MODENORMAL 0x0C		00001101	normal video mode
+MODEINVERSE 0x0D	00001101	inverse video mode
 
 
+By testing with noise in the data different display modes were observed. 
+Unfortunately it is unknown yet which initialisation commands can be used.
+SETINVERSE	- all pixels are shown in inverse, white is black and black is white
+SETCONTRAST	- depending on the value contrast can be changed from vague pixels on blank to dark pixels on lighter
+SETMIRROR	- when on, pixels are not displayed right to left, but left to right (mirrored)
 
 
+RESET/STARTUP
+-0x23	functionset extended, vertical addressing mode?
+-0x03	unknown extended command: RESET???
+
+INIT
+-0x23	functionset extended vertical addressing mode?
+-0x08	unknown extended command???
+-0x92	unknown extended command???
+=0x21	functionset extended horizontal addressing mode
+-0x12	set bias system to 2 (BS1=on - 1:65)???
+-0x0C	unknown extended command: reserved???
+=0xA8	set contrast (Vop to 0x28=40) ???
+=0x20	functionset basic horizontal addressing mode
+-0x05	unknown basic command: reserved???
+=0x0C	display control normal (not inverse)
+
+########
+# Some Nokia 5110 PCD8544 init commands 
+# 0x20 - 0x23 	20=basic mode horizontal, 21=ext. mode hor., 22=basic mode vertical, 23=ext.mode vert. 
+# 0x08 - 0x0D  08=displ.blank, 09=all black, 0C=normal mode, 0D=inverse mode
+# ext + 0x04-0x07 - Set Vlcd temperature coefficient (0-3)
+# ext + 0x10-0x17 - Set Bias System
+# ext + 0x80-0xFF - write Vop to register (0-127)
+########
+
+########
+# The reset commands seem similar as used in the ST7549T (Sitronix 68 x 102 Dot Matrix LCD Controller/Driver)
+# Datasheet p.26:
+#
+# -0x23	Functionset extended: H0=1, H1=1
+# -0x03	Software reset
+#
+# In the init these commands are issued:
+# -0x23	Functionset extended: H0=1, H1=1
+# -0x08	Frame rate control set to 0x0 (55Hz)
+# -0x92	Booster Efficienty set to BE1=0, BE0=0, PC1=1, PC0=0 (BE level 4, Power consumption booster*4)
+# -0x21	Functionset extended: H0=1, H1=0
+# -0x12	set bias system to 2 (BS1=on - 1:65)
+# -0x0C	Display configuration D0=1 (D0=1: LSB is on top, D0=0: MSB is on top)
+# =0xA8	Set contrast (Vop to 0x28=40)
+# =0x20	Functionset basic: H0=1, H1=1
+# -0x05	Vop range set PRS=1 (1=Programming range HIGH)
+# =0x0C	display control normal (D=1, E=0: not inverse)
+#
+# When setting the address 3 commands are given:
+# -0x80 Set X address to 0
+# -0x43 Set Y address to 3
+# -0x07 Set Read/modify/write: R:+0, w:+1 (automatic address increase only on write)
+#
+########
 
 Data blocks:
 [48ms]
@@ -122,19 +165,19 @@ block data: 102 bytes 0x00, 13.5us perbyte (1us low, 12.5us high)
 0xC8  set x position
 0x07
 bitmap data: frame 1, 21 bytes pixels: white=L (8.5us cycle: 1us low, 7,5us high), black=H (8.5-13us)
-0xA9  write white pixels till end? 15us byte
+0xA9  set x position (not needed?) 15us byte
 
 0x44  set y position 8.5us byte
 0xC8  set x position
 0x07
 bitmap data: frame 2, 21 bytes pixels: white=L (8.5us cycle: 1us low, 7,5us high), black=H (8.5-13us)
-0xA9  write white pixels till end? 15us byte - 0xA9=0xA + 9
+0xA9  set x position (not needed?) 15us byte - 0xA9=0xA + 9
 
 0x45  set y position
 0xCC  set x position (four further than col 0xC8)
 0x07
 bitmap data: frame 3. 13 bytes inverse pixels: white=L (8.5us cycle: 1us low, 7,5us high), black=H (8.5-13us)
-0xAD write white pixels till end? (2.5us low, unknown high) - 0xAD=0xA + 13 (four more than 0xA9)
+0xAD set x position (not needed?) (2.5us low, unknown high) - 0xAD=0xA + 13 (four more than 0xA9)
 
 
 [678us]
@@ -281,6 +324,8 @@ Po-mini 3v3 328@8Mzh, cascaded dual shift register, DC/CLK on exp.P8/P9
 TIMINGS ARDUINO LIBRARY
 +++++++++++++++++++++++
 Adafruit Test example
-Po-mini 3v3 328@8Mzh, cascaded dual shift register, DC/CLK on exp.P8/P9 (150us byte-cycle)
+Pro-mini 3v3 328@8Mzh, cascaded dual shift register, DC/CLK on exp.P8/P9 (150us byte-cycle)
 [1:456ms]  [2:0ms]  [3:84ms]  [5:84ms]  [7:795ms]  [8:84ms]  [9:845ms]  [11:1616ms]  [12:94ms]  [13:707ms]  [14:1044ms]  [15:340ms]  [16:379ms]  [17:215ms]  [29:115ms]  [20:166ms]  [23:92ms]  [25:112ms]  [26:0ms]  [28:88ms]  [40:84ms]  [41:2ms] 
+
+ESP-01 (3v3 ESP8266@80Mzh), cascaded dual shift register, DC/CLK on exp.P8/P9 (116us-168us byte-cycle) software SPI
 
