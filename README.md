@@ -7,11 +7,6 @@ This is a library for the LCD display found in the e.dentifier2 bank card reader
 
 The LCD panel of the device is marked "C41000169 A14 11 0E 019264". Unfortunately no public documentation of the LCD panel in the device was found. By reverse engineering sufficient information was gained to use the display in an 3.3V Arduino environment. The control commandset resembles that of Philips LCD control chips (such as the popular PCD8544) and other similar chips (such as the Sitronix ST7549T), but the LCD differs in functionality. For more information see the various sections below.
 
-See also:
- - http://nl.wikipedia.org/wiki/E.dentifier
- - http://nl.wikipedia.org/wiki/Chipknip
- - http://www.ru.nl/publish/pages/769526/2011_arjanblom.pdf
-
 This library requires the Adafruit GFX library, the [mxUnifiedIO](https://github.com/maxint-rd/mxUnifiedIO) library and a suitable mxUnifiedIO expander driver. This driver was made using the Adafruit PCD8544 Nokia 5110 LCD library as example, but instead of directly using pins it allows the display to be driven via the expanded pins of an I2C I/O expander or a shift-register.
 
 YouTube videos
@@ -44,7 +39,7 @@ The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on g
 |  16    	|	LCDCAP  | LCD Contrast.	Connect to GND via 100nF Capacitor. 10K resistor may work too. |
 |  17-18  |	NC	     |	Not connected (-3V - 5V) output of LCD chargepump |
 
-(Read documentation/lcd e.dentifier2.txt for more info)
+(See files in [documentation](/documentation) for more info)
 
 
 Using SPI shift-register
@@ -87,7 +82,7 @@ Download the required libraries (see links below). Use the Arduino IDE to add th
 Alternatively copy all library files into a folder under your <arduinosketchfolder>/libraries/ folder and restart the IDE.
 
 You will also have to install the Adafruit GFX Graphics core library which does all the circles, text, rectangles, etc; as well as the
-mxUnifiedIO library. Also install either the mxUnifiedPCF8574 library or the mxUnified74HC595 librraries, which are used to drive the LCD chip.
+mxUnifiedIO library. Also install either the mxUnifiedPCF8574 library or the mxUnified74HC595 libraries, which are used to drive the LCD chip.
 
 See the included examples to learn more about using this library.
 
@@ -101,7 +96,7 @@ TROUBLESHOOTING TIPS
 Features & limitations
 ======================
 - The current version of this library supports ESP8266 and Atmel ATmega328 MCUs. On some experiments using an ESP-01 occasional noise was observed, possibly due to power issues. Noise may cause wild pixels on the display or errors initializing properly, resulting in nothing displayed or in distorted images, depending on which bits flipped when.
-- Currently the LCD commands are not decisively fully known. The command-set resembles that of the Nokia 5110 (PCD8544) and other Philips LCD controllers. More features were discovered in the Sitronix ST7549T datasheet. There are multiple controller manufacturers using similar protocols, which can be recognized for instance by there addressing scheme (0x4xxx and 0x8xxx for rows and columns). Based on the datasheets of the Philips and Sitronix controllers more commands were discovered (such as inverting and setting contrast). All commands used by the e.dentifier2 device have been identified but more commands could be applicable to this LCD. 
+- Currently the LCD commands are not decisively fully known. The command-set resembles that of the Nokia 5110 (PCD8544) and other Philips LCD controllers as well as similar chips such as the Sitronix ST7549T. Multiple controller manufacturers are using similar protocols, which can be recognized for instance by their addressing scheme (0x4xxx and 0x8xxx for rows and columns). Based on the datasheets of the Philips and Sitronix controllers more commands were discovered (such as inverting and setting contrast). All commands used by the e.dentifier2 device have been identified (see documentation) but more commands could be applicable to this LCD. 
 
 LINKS
 =====
@@ -126,6 +121,11 @@ For reference:
     * https://playground.arduino.cc/Main/I2cScanner
 - The original Adafruit PCD8544 Nokia 5110 LCD SPI library:
     * https://github.com/adafruit/Adafruit-PCD8544-Nokia-5110-LCD-library
+
+More about the e.dentifier2 device:
+ - http://nl.wikipedia.org/wiki/E.dentifier
+ - http://nl.wikipedia.org/wiki/Chipknip
+ - http://www.ru.nl/publish/pages/769526/2011_arjanblom.pdf
 
 
 LICENSE
