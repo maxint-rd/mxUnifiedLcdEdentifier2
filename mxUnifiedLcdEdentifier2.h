@@ -181,7 +181,7 @@ class mxUnifiedLcdEdentifier2 : public Adafruit_GFX
 	void clearDisplay(void);
   
   void drawPixel(int16_t x, int16_t y, uint16_t color);
-  uint8_t getPixel(int8_t x, int8_t y);
+  uint16_t getPixel(int16_t x, int16_t y);
 
  private:
   int8_t _dc, _clk;

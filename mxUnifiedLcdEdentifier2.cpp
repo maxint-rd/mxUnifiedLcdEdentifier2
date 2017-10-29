@@ -136,13 +136,13 @@ uint8_t lcdedent2_buffer[LCDWIDTH * LCDROWS] = {
 
 // row 0x42 - top (right to left, top pixel in highest bit) - topside is side with connector
 // row 5 of upside down image							/----- ** * ----\    <-- NOTE: space is required after literal backslash in comment!
-0x01, 0x02, 0x04, 0x08, 0x10, 0x20, 0x40, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+0xFF, 0x82, 0x84, 0x88, 0x90, 0xA0, 0xC0, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00,
 0x00, 0x00, 0x00, 0xF0, 0xFE, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFE,
 0x7E, 0x3F, 0x3F, 0x0F, 0x1F, 0xFF, 0xFF, 0xFF, 0xFC, 0xF0, 0xE0, 0xF1, 0xFF, 0xFF, 0xFF, 0xFF,
 0xFF, 0xFC, 0xF0, 0x01, 0x01, 0x01, 0x01, 0x81, 0x81, 0x81, 0x81, 0x80, 0x80, 0x80, 0x80, 0x80,
 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x40,
-0x20, 0x10, 0x08, 0x04, 0x02, 0x01,
+0xA0, 0x10, 0x88, 0x04, 0x82, 0x55,
 
 
 /* Adafruit logo (orinal for Nokia 5110 84x48)
@@ -189,6 +189,9 @@ uint8_t lcdedent2_buffer[LCDWIDTH * LCDROWS] = {
 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 
 */
 };
+
+
+#define lcdedent2_swap(a, b) { int16_t t = a; a = b; b = t; }
 
 
 // reduces how much is refreshed, which speeds it up!
@@ -368,20 +371,28 @@ void mxUnifiedLcdEdentifier2::drawPixel(int16_t x, int16_t y, uint16_t color) {
     return;
 
   int16_t t;
-  switch(rotation){
+  switch(getRotation()) {
     case 1:
+	    lcdedent2_swap(x, y);
+	    y = LCDHEIGHT - y - 1;
+/*
       t = x;
       x = y;
       y =  LCDHEIGHT - 1 - t;
+*/
       break;
     case 2:
       x = LCDWIDTH - 1 - x;
       y = LCDHEIGHT - 1 - y;
       break;
     case 3:
+	    lcdedent2_swap(x, y);
+	    x = LCDWIDTH - x - 1;
+/*
       t = x;
       x = LCDWIDTH - 1 - y;
       y = t;
+*/
       break;
   }
 
@@ -399,10 +410,31 @@ void mxUnifiedLcdEdentifier2::drawPixel(int16_t x, int16_t y, uint16_t color) {
 }
 
 
-// the most basic function, get a single pixel
-uint8_t mxUnifiedLcdEdentifier2::getPixel(int8_t x, int8_t y) {
+// The most basic function, get a single pixel
+// MMOLE: used for slow pixel-by-pixel software scrolling
+// (see https://github.com/adafruit/Adafruit-GFX-Library/pull/60)
+uint16_t mxUnifiedLcdEdentifier2::getPixel(int16_t x, int16_t y) {
+  if ((x < 0) || (x >= _width) || (y < 0) || (y >= _height))
+    return WHITE;
+
+  // check rotation, move pixel around if necessary
+  switch (getRotation()) {
+  case 1:		// 90 degrees counter clockwise from 0
+    lcdedent2_swap(x, y);
+    y = LCDHEIGHT - y - 1;
+    break;
+  case 2:
+    x = LCDWIDTH - x - 1;
+    y = LCDHEIGHT - y - 1;
+    break;
+  case 3:		// 270 degrees counter clockwise (is 90 degrees clockwise) from 0
+    lcdedent2_swap(x, y);
+    x = LCDWIDTH - x - 1;
+    break;
+  }
+
   if ((x < 0) || (x >= LCDWIDTH) || (y < 0) || (y >= LCDHEIGHT))
-    return 0;
+    return WHITE;
 
   y+=LCDROWFIXY;		//fix rounding half row
   return (lcdedent2_buffer[x+ (y/8)*LCDWIDTH] >> (y%8)) & 0x1;  
