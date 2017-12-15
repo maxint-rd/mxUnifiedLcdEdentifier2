@@ -10,9 +10,9 @@ products from Adafruit!
 BSD license, check license.txt for more information
 All text above, and the splash screen must be included in any redistribution
 
-Library adapted by Maxint R&D to drive Nokia 5110 display via an
+Library adapted by Maxint R&D to drive the LCD display via an
 I2C I/O expander or the 74HC595 shift register using the mxUnifiedIO API.
-https://github.com/maxint-rd/mxUnifiedPIO
+https://github.com/maxint-rd/mxUnifiedIO
 
 *********************************************************************/
 
