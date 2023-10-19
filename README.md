@@ -39,6 +39,7 @@ The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on g
 |  16    	|	LCDCAP  | LCD Contrast.	Connect to GND via 100nF Capacitor. 10K resistor may work too. |
 |  17-18  |	NC	     |	Not connected (-3V - 5V) output of LCD chargepump |
 
+Update: a 16-pin version was found! This version seems almost identical, except that pins 17-18 are not present. other than that the pinout seems identical.
 (See files in [documentation](/documentation) for more info)
 
 
