@@ -1,12 +1,32 @@
 e.dentifier2 COG LCD
+====================
 
-Opdruk achterzijde:
-C41000169
-A14 11 0E 019264
+Opdruk 18-pin variant (voor 16-pin variant zie onder)
+---------------------
+Opdruk achterzijde display:
+ - C41000169   A14 11 0E 019264
+ - C41000179   A14 11 08 017592
+Opdruk PCB:
+ - Voor: 1 442s
+ - Achter: 200451139_PWS04   Q3   G4501-0190-0
+   LCD header J2 met pin-nummers 18 16    1
+verborgen modelnummer in glas achterzijde rechtsboven:
+ - VM86702A
 
-verborgen modelnummer in glas linker-bovenzijde: VM86702A
+Opdruk 16-pin variant (voor 18-pin variant zie boven)
+---------------------
+Opdruk achterzijde display:
+ - 4412-A0009   C80600384   A8 06 28 004789
+Opdruk PCB:
+ - Voor: WS 2208   E190407 YS-3   94V0 FR4   WD22125B
+ - Achter: 200451139_PWS04   G4501-0109-1
+   Verticaal zwart gedrukt LF0827H, geen nummering bij LCD header 
+verborgen modelnummer in glas achterzijde rechtsboven:
+ - VM6327A
 
 
+Pinout 18-pin variant
+---------------------
  1	3v	VCC		storing?, reflectie van data, dik spoor naar caps C16, c10 en C11
 				??Supply voltage for logic and LCD (+)
  2*	3v	Vdd?		storing?, reflectie van data, dun spoor naar C12 (kan samen met 1)
@@ -33,6 +53,11 @@ verborgen modelnummer in glas linker-bovenzijde: VM86702A
 18*	-3.0V	50Hz PWM 50% Vee? 	verbonden aan #17 via R42 (31 Ohm) en C36 (100nF) => optioneel. 
 					Output of inverting chargepump?: Vee = - Vdd = -3V
 * kunnen NC zijn
+
+Pinout 16-pin variant lijkt op 18-pin (nog niet getest)
+---------------------
+1-16 zelfde layout als bij 18-pin variant. Pin 15 (GND) heeft wat dunner spoor.
+Pinnen 17-18 ontbreken.
 
 Clock cycle length:
 - Clear block: 13.5us (74KHz)
