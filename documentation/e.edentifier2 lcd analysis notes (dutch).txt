@@ -54,10 +54,11 @@ Pinout 18-pin variant
 					Output of inverting chargepump?: Vee = - Vdd = -3V
 * kunnen NC zijn
 
-Pinout 16-pin variant lijkt op 18-pin (nog niet getest)
+Pinout 16-pin variant lijkt op 18-pin
 ---------------------
 1-16 zelfde layout als bij 18-pin variant. Pin 15 (GND) heeft wat dunner spoor.
-Pinnen 17-18 ontbreken.
+Pinnen 17-18 ontbreken. Klokpuls lijkt wat sneller (0,125us ipv. 0,250us), maar
+uit analyse met logic analyser blijkt aansturing identiek aan 18-pin variant.
 
 Clock cycle length:
 - Clear block: 13.5us (74KHz)
@@ -92,14 +93,14 @@ RESET/STARTUP
 
 INIT
 -0x23	functionset extended vertical addressing mode?
--0x08	unknown extended command???
--0x92	unknown extended command???
+-0x08	unknown extended command, see below for possible alternatives
+-0x92	unknown extended command, see below for possible alternatives
 =0x21	functionset extended horizontal addressing mode
 -0x12	set bias system to 2 (BS1=on - 1:65)???
 -0x0C	unknown extended command: reserved???
 =0xA8	set contrast (Vop to 0x28=40) ???
 =0x20	functionset basic horizontal addressing mode
--0x05	unknown basic command: reserved???
+-0x05	unknown basic command: reserved, see below for possible alternatives
 =0x0C	display control normal (not inverse)
 
 ########
