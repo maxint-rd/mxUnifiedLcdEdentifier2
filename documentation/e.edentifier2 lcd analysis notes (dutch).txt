@@ -31,9 +31,10 @@ Pinout 18-pin variant
 				??Supply voltage for logic and LCD (+)
  2*	3v	Vdd?		storing?, reflectie van data, dun spoor naar C12 (kan samen met 1)
 				??Operating voltage for LCD (variable)
- 3	3v	CLK  (WR?)	low pulsen len. 0.25us vlak voor elke byte data => (kan samen met #4)
-				?? R/W?? H=read?, L=write
- 4	3v	CLK? (CS?)	low pulsen len. 0.125us direct aan begin van elke byte data (kan samen met #3)
+ 3	3v	/CS		low pulsen len. 0.25us vlak voor elke byte data => (kan samen met #4)
+				Altijd laag tijdens DC/WR pulsen, L=chip selected
+ 4	3v	/WR		low pulsen len. 0.125us direct aan begin van elke byte data (kan samen met #3)
+				L=write data/command
  5	3v	Vref?		altijd hoog, stabiel 3.0V (kan samen met #1 of #2)
 				?? /RES  Reset (active low)??
  6	3v	D/C		low 0.25-0.31us bij command (begin vlak voor cmd), 
@@ -57,8 +58,7 @@ Pinout 18-pin variant
 Pinout 16-pin variant lijkt op 18-pin
 ---------------------
 1-16 zelfde layout als bij 18-pin variant. Pin 15 (GND) heeft wat dunner spoor.
-Pinnen 17-18 ontbreken. Klokpuls lijkt wat sneller (0,125us ipv. 0,250us), maar
-uit analyse met logic analyser blijkt aansturing identiek aan 18-pin variant.
+Pinnen 17-18 ontbreken. Uit analyse met logic analyser blijkt aansturing verder identiek.
 
 Clock cycle length:
 - Clear block: 13.5us (74KHz)
@@ -79,13 +79,11 @@ MODEALLBLACK 0x09	00001001	all pixels black
 MODENORMAL 0x0C		00001101	normal video mode
 MODEINVERSE 0x0D	00001101	inverse video mode
 
-
 By testing with noise in the data different display modes were observed. 
-Unfortunately it is unknown yet which initialisation commands can be used.
 SETINVERSE	- all pixels are shown in inverse, white is black and black is white
 SETCONTRAST	- depending on the value contrast can be changed from vague pixels on blank to dark pixels on lighter
 SETMIRROR	- when on, pixels are not displayed right to left, but left to right (mirrored)
-
+The sequence below shows the initialisation commands used by the e.dentifier2 device.
 
 RESET/STARTUP
 -0x23	functionset extended, vertical addressing mode?
@@ -93,14 +91,14 @@ RESET/STARTUP
 
 INIT
 -0x23	functionset extended vertical addressing mode?
--0x08	unknown extended command, see below for possible alternatives
--0x92	unknown extended command, see below for possible alternatives
+-0x08	unknown extended command, see below for possible meanings
+-0x92	unknown extended command, see below for possible meanings
 =0x21	functionset extended horizontal addressing mode
 -0x12	set bias system to 2 (BS1=on - 1:65)???
 -0x0C	unknown extended command: reserved???
 =0xA8	set contrast (Vop to 0x28=40) ???
 =0x20	functionset basic horizontal addressing mode
--0x05	unknown basic command: reserved, see below for possible alternatives
+-0x05	unknown basic command: reserved, see below for possible meanings
 =0x0C	display control normal (not inverse)
 
 ########
@@ -134,7 +132,10 @@ INIT
 # When setting the address 3 commands are given:
 # -0x80 Set X address to 0
 # -0x43 Set Y address to 3
-# -0x07 Set Read/modify/write: R:+0, w:+1 (automatic address increase only on write)
+# -0x07 Set Read/modify/write: R:+0, W:+1 (automatic address increase only on write)
+#
+# At power down a single command is given (not when using usb):
+# - 0x24 Power Down
 #
 ########
 
@@ -260,7 +261,7 @@ bitmap data frame 4: 3x17x6 bytes remainder/0x00, slow timing: 25us bytes 1-4, 9
 
 [xx]
 -9- shutdown/card eject? (1 byte) vlak voor power off, niet bij usb-power off
-0x24
+0x24  Power Down
 
 y    x
 9  x 6   font
