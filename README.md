@@ -32,7 +32,7 @@ The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on g
 | pin(s)   |name    |description |
 |---------|---------|------------|
 |  1,2,5 	|	3V VCC  |	POWER+. Connect 1 to 2 and 5, then to Arduino 3.3V |
-|  3,4	   |	CS_WR 	 |	3: Chip Select. 4: Write.	Combined: connect 3 to 4 and to (expanded) pin 8 |
+|  3,4	   |	CLK   	 |	Combined Chip Select and Write. Connect 3 (CS) to 4 (WR) and to (expanded) pin 8 |
 |  6   	 	|	DC	     |	Data/command. Connect to (expanded) pin 9 |
 |  7-14  	|	D7-D0   |	Data pins.	Connect to expanded pins 0-7 |
 |  15    	|	GND		 		|	POWER-. Connect to Arduino GND 0V |
