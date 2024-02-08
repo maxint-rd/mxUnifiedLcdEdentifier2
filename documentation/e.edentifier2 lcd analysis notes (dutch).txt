@@ -51,9 +51,9 @@ Pinout 18-pin variant
 15	0V	GND
 16	1.9V	contrast (Vee?)	C14 (100nF) naar #15 (GND). (kan met 10K naar GND)
 17*	4.9V	50Hz PWM 50% Vss? 
-18*	-3.0V	50Hz PWM 50% Vee? 	verbonden aan #17 via R42 (31 Ohm) en C36 (100nF) => optioneel. 
+18*	-3.0V	50Hz PWM 50% Vee? 	verbonden aan #17 via R42 (opdruk 310 maar gemeten op 1M Ohm ipv. 31 Ohm) en C36 (100nF) => optioneel? 
 					Output of inverting chargepump?: Vee = - Vdd = -3V
-* kunnen NC zijn
+* kunnen mogelijk NC zijn? 
 
 Pinout 16-pin variant lijkt op 18-pin
 ---------------------
