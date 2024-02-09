@@ -27,11 +27,13 @@ LCD panel pinout
      | '~`^"             |
      +-------------------+
 
-The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on glass (COG). The connector has 18 pins which are not fully understood yet. By experiments the following minimal connections were found working using a 3.3v Arduino 328 @ 8MHz and a 74HC595 shift register.
+The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on glass (COG). Note that the pixes are not square but upright rectangles.
+The connector has either 18 or 16 pins which are mostly understood. By experiments the following minimal connections were found working using a 3.3v Arduino 328 @ 8MHz and a 74HC595 shift register. These connections were confirmed using other 3V MCU's (eg. CH32V003 and ESP8266).
 
 | pin(s)   |name    |description |
 |---------|---------|------------|
-|  1,2,5 	|	3V VCC  |	POWER+. Connect 1 to 2 and 5, then to Arduino 3.3V |
+|  1, 5 	 |	3V VCC  |	POWER+. Connect 1 and 5, then to Arduino 3.3V |
+|  2      | /RES    | Reset. Can be tied to 1 on some modules, others require reset signal<br> This can be Reset-line of MCU or auto power-on-reset cicuit:<br> VCC -- 15kOhm -- #2 -- 100nF -- GND |
 |  3,4	   |	CLK   	 |	Combined Chip Select and Write. Connect 3 (CS) to 4 (WR) and to (expanded) pin 8 |
 |  6   	 	|	DC	     |	Data/command. Connect to (expanded) pin 9 |
 |  7-14  	|	D7-D0   |	Data pins.	Connect to expanded pins 0-7 |
@@ -40,7 +42,8 @@ The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on g
 |  17-18  |	NC	     |	Not connected (-3V - 5V) output of LCD chargepump |
 
 Update: a 16-pin version was found! Pins 17-18 are not present; the other pins are identical. Testing and analysis showed identical interface.
-(See files in [documentation](/documentation) for more info)
+The 18-pin version may be more sensitive to having a proper reset signal on pin 2. The 16-pin model worked with pin 2 tied to 1 and 5.
+(See analysis in [documentation](/documentation) for more info)
 
 
 Using SPI shift-register
