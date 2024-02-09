@@ -5,7 +5,7 @@ Opdruk 18-pin variant (voor 16-pin variant zie onder)
 ---------------------
 Opdruk achterzijde display:
  - C41000169   A14 11 0E 019264
- - C41000179   A14 11 08 017592
+ - C41000170   A14 11 08 017592  <+++ vereist reset signaal op pin 2
 Opdruk PCB:
  - Voor: 1 442s
  - Achter: 200451139_PWS04   Q3   G4501-0190-0
@@ -29,14 +29,15 @@ Pinout 18-pin variant
 ---------------------
  1	3v	VCC		storing?, reflectie van data, dik spoor naar caps C16, c10 en C11
 				??Supply voltage for logic and LCD (+)
- 2*	3v	Vdd?		storing?, reflectie van data, dun spoor naar C12 (kan samen met 1)
-				??Operating voltage for LCD (variable)
+ 2	3v	/RES		reset (active low), toonde bij eerste meting reflectie van data, dun spoor naar C12 en MCU. 
+				Kan bij sommige displays met #1, maar geeft bij anderen instabiel beeld (zwart veld, wazige pixels).
+				Bij die modellen kan #2 aan reset van MCU, of aan een auto-reset circuit:
+				  VCC -- 15kOhm -- #2 -- 100nF -- GND
  3	3v	/CS		low pulsen len. 0.25us vlak voor elke byte data => (kan samen met #4)
 				Altijd laag tijdens DC/WR pulsen, L=chip selected
  4	3v	/WR		low pulsen len. 0.125us direct aan begin van elke byte data (kan samen met #3)
 				L=write data/command
- 5	3v	Vref?		altijd hoog, stabiel 3.0V (kan samen met #1 of #2)
-				?? /RES  Reset (active low)??
+ 5	3v	Vref?		altijd hoog, stabiel 3.0V (kan samen met #1)
  6	3v	D/C		low 0.25-0.31us bij command (begin vlak voor cmd), 
 				regelmatige (120us) bundels storing (62ns) in high bij data aan begin data pulse
 				H=data, L=command
