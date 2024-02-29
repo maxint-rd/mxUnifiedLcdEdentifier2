@@ -6,9 +6,10 @@ Opdruk 18-pin variant (voor 16-pin variant zie onder)
 Opdruk achterzijde display:
  - C41000169   A14 11 0E 019264
  - C41000170   A14 11 08 017592  <+++ vereist reset signaal op pin 2
+ - D-GFC30014A-0-O N C 300175 619 10427 A ROHS
 Opdruk PCB:
  - Voor: 1 442s
- - Achter: 200451139_PWS04   Q3   G4501-0190-0
+ - Achter: 200451139_PWS04  G4501-0190-0
    LCD header J2 met pin-nummers 18 16    1
 verborgen modelnummer in glas achterzijde rechtsboven:
  - VM86702A
