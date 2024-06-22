@@ -95,7 +95,7 @@ TROUBLESHOOTING TIPS
 ====================
 - Use the I2C scanner sketch to see if the PCF8574 I2C LCD driver is properly connected and responding.
 - Check if all data-pins between display and interface modules are properly connected, according the pins as defined in your sketch.
-- Use a multimeter to check pin voltages. Note: the e.dentifier2 device runs the LCD at 3V (measured 3.2V on pin 1). The LCD has been tested to work fine on 3.3V and has also been tested succesfully on 5V. It may fail when using higher voltages.
+- Use a multimeter to check pin voltages. Note: the e.dentifier2 device runs the LCD at 3V (measured 3.2V on pin 1). The LCD has been tested to work fine on 3.3V and has also been tested succesfully on 5V. Note that 5V may require different contrast levels than 3V. The display may fail when using higher voltages.
 
 Features & limitations
 ======================
