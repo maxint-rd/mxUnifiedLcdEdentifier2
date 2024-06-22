@@ -1,5 +1,5 @@
 # mxUnifiedLcdEdentifier2
-mxUnifiedIO device library for Arduino. Device specific driver for the LCD in the e.dentifier2 bank card device, derived from the Adafruit GFX library. Use SPI shift registers or I2C I/O expanders via the mxUnifiedIO API.
+mxUnifiedIO device library for Arduino. Device specific driver for the LCD in the e.dentifier2 bank card device, derived from the Adafruit GFX library. Use SPI shift registers or I2C I/O expanders via the [mxUnifiedIO API](https://github.com/maxint-rd/mxUnifiedIO).
 
 DESCRIPTION
 ===========
@@ -27,13 +27,13 @@ LCD panel pinout
      | '~`^"             |
      +-------------------+
 
-The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on glass (COG). Note that the pixes are not square but upright rectangles.
+The e.dentifier2 LCD panel is a 102x36 pixels graphical display with a chip on glass (COG). Note that the pixels are not square but upright rectangles.
 The connector has either 18 or 16 pins which are mostly understood. By experiments the following minimal connections were found working using a 3.3v Arduino 328 @ 8MHz and a 74HC595 shift register. These connections were confirmed using other MCU's (eg. CH32V003 and ESP8266).
 
 | pin(s)   |name    |description |
 |---------|---------|------------|
 |  1, 5 	 |	VCC     |	POWER+. Connect 1 and 5, then to Arduino VCC. Tested to work on both 3v3 and on 5V |
-|  2      | /RES    | Reset. Can be tied to 1 on some modules, others require reset signal<br> This can be Reset-line of MCU or auto power-on-reset cicuit:<br> VCC -- 15kOhm -- #2 -- 100nF -- GND |
+|  2      | /RES    | Reset. Can be tied to 1 on some modules, others require reset signal.<br> This can be Reset-line of MCU or auto power-on-reset cicuit:<br> VCC -- 15kOhm -- #2 -- 100nF -- GND |
 |  3,4	   |	CLK   	 |	Combined Chip Select and Write. Connect 3 (CS) to 4 (WR) and to (expanded) pin 8 |
 |  6   	 	|	DC	     |	Data/command. Connect to (expanded) pin 9 |
 |  7-14  	|	D7-D0   |	Data pins.	Connect to expanded pins 0-7 |
@@ -45,16 +45,17 @@ Update: a 16-pin version was found! Pins 17-18 are not present; the other pins a
 The 18-pin version may be more sensitive to having a proper reset signal on pin 2. The 16-pin model worked with pin 2 tied to 1 and 5.
 (See analysis in [documentation](/documentation) for more info)
 
+Using MCU pins only
+===================
+This library was made for use with the mxUnifiedIO API for I/O expanders. When using no physical I/O expander (such as a shift-register or an I2C chip), the MCU pins can be configured to function as a virtual I/O expander. The [specifyPins() method](https://github.com/maxint-rd/mxUnifiedIO/blob/master/mxUnifiedIO.h) of the [mxUnifiedIO base class](https://github.com/maxint-rd/mxUnifiedIO#mcu-pin-abstraction) can be used to configure the pins.
 
 Using SPI shift-register
 ========================
-The (shared) SPI bus requires three data-lines to connect one or more shift registers (SS, MOSI and SCK). On the Arduino UNO, Nano and Pro Mini, the pins for (fast) hardware SPI are
-D10, D11 and D13. On the ESP8266 the default SPI pins are GPIO15, GPIO13 and GPIO14. When using (slower) software SPI others can be selected too.
+The (shared) SPI bus requires three data-lines to connect one or more shift registers (SS, MOSI and SCK). On the Arduino UNO, Nano and Pro Mini, the pins for (fast) hardware SPI are D10, D11 and D13. On the ESP8266 the default SPI pins are GPIO15, GPIO13 and GPIO14. When using (slower) software SPI others can be selected too.
 
-This driver supports using one shift-register for the datapins in combination with two regular pins for WR and DC. Alternatively two cascaded registers can be using in which case the datapins
-are all supplied by the ending (first) register and the WR and DC by the second. For the shift-register the mxUnified74HC595 driver is used over SPI.
+This driver supports using one shift-register for the datapins in combination with two regular pins for WR and DC. Alternatively two cascaded registers can be using in which case the datapins are all supplied by the ending (first) register and the WR and DC by the second. For the shift-register the mxUnified74HC595 driver is used over SPI.
 
-See the included example for suggested connections of the display module to the shift register(s).
+See the [included examples](https://github.com/maxint-rd/mxUnifiedLcdEdentifier2/tree/master/examples) for suggested connections of the display module to the shift register(s).
 
 Using I2C I/O expander
 ======================
@@ -62,7 +63,7 @@ The (shared) I2C bus only requires two data-lines (SDA and SCL). On the Arduino 
 
 To drive this LCD module, the I/O expander needs to have at least 8 output pins available, all at the same H/L level. For that reason the cheap I2C backpack board can not be used for this display.
 
-See the examples in mxUnifiedPCD8544_Nokia_5110_LCD for suggested connections of the display module to an I2C LCD driver interface.
+See the examples in [mxUnifiedPCD8544_Nokia_5110_LCD](https://github.com/maxint-rd/mxUnifiedPCD8544_Nokia_5110_LCD) for suggested connections of the display module to an I2C LCD driver interface.
 This LCD driver library has not been tested with an I2C I/O expander yet, but should function just as well as when using a shift register.
 
 CREDITS
